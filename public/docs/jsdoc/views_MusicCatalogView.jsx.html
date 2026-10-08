@@ -1,0 +1,344 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> views/MusicCatalogView.jsx</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    Documentation
+                </a>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Global</h3><ul><li><a href="global.html#PlaceholderObject3D">PlaceholderObject3D</a></li><li><a href="global.html#useSoundFX">useSoundFX</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p>Source</p>
+                    <h1>views/MusicCatalogView.jsx</h1>
+                </header>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState } from "react";
+
+/**
+ * Renders the album catalog and its optional passcode prompt.
+ * @param {Object} props Catalog data and playback/navigation callbacks.
+ * @param {Array&lt;Object>} props.albumsData Albums and their track metadata.
+ * @param {Object|null} props.currentTrack Currently active track, if any.
+ * @param {boolean} props.isPlaying Whether the shared player is playing.
+ * @param {function(Object, Object): void} props.onPlayTrack Starts or toggles a track.
+ * @param {Function} props.onStopMusic Stops the shared music player.
+ * @param {function(Object): void} props.onSelectAlbum Opens album details.
+ * @returns {React.ReactElement}
+ */
+export default function MusicCatalogView({
+  albumsData,
+  currentTrack,
+  isPlaying,
+  onPlayTrack,
+  onStopMusic,
+  onSelectAlbum,
+  unlockedAlbums = [],
+}) {
+  const [passwordModalAlbum, setPasswordModalAlbum] = useState(null);
+  const [enteredPassword, setEnteredPassword] = useState("");
+  const [passwordError, setPasswordError] = useState(false);
+
+  /**
+   * Requests a passcode for a locked album or opens an available album.
+   * @param {Object} album Album selected from the catalog.
+   * @returns {void}
+   */
+  const handleAlbumClick = (album) => {
+    if (album.isLocked &amp;&amp; !unlockedAlbums.includes(album.id)) {
+      setPasswordModalAlbum(album);
+      setEnteredPassword("");
+      setPasswordError(false);
+      return;
+    }
+    onSelectAlbum(album);
+  };
+
+  /**
+   * Validates the entered passcode and opens the album when it matches.
+   * @param {React.FormEvent&lt;HTMLFormElement>} event Form submission event.
+   * @returns {void}
+   */
+  const handlePasswordSubmit = (event) => {
+    event.preventDefault();
+    const correctPassword = passwordModalAlbum?.password || "1234";
+    if (enteredPassword === correctPassword) {
+      setUnlockedAlbums((prev) => [...prev, passwordModalAlbum.id]);
+      const albumToOpen = passwordModalAlbum;
+      setPasswordModalAlbum(null);
+      onSelectAlbum(albumToOpen);
+    } else {
+      setPasswordError(true);
+    }
+  };
+
+  return (
+    &lt;div className="flex flex-col h-full justify-between py-1 max-lg:landscape:py-0 md:py-0 overflow-hidden relative">
+      {/* Header text */}
+      &lt;div className="shrink-0 mb-1 max-lg:landscape:mb-0.5 md:mb-2">
+        &lt;p className="text-[9px] max-lg:landscape:text-[7px] md:text-xs tracking-[0.25em] text-white/50 uppercase mb-0.5 max-lg:landscape:mb-0">
+          CATALOGUE NO. 02 — DISCOGRAPHY &amp; SONIC EXPERIMENTS
+        &lt;/p>
+        &lt;h2 className="text-base max-lg:landscape:text-xs md:text-4xl font-bold tracking-tight">
+          SOUNDS OF AREMU
+        &lt;/h2>
+      &lt;/div>
+
+      {/* Catalog items container - fixed landscape padding &amp; bottom cushion */}
+      &lt;div className="flex flex-col max-lg:landscape:flex-row md:flex-row gap-3 max-lg:landscape:gap-3 md:gap-6 overflow-y-auto max-lg:landscape:overflow-y-hidden max-lg:landscape:overflow-x-auto md:overflow-y-hidden md:overflow-x-auto p-2.5 max-lg:landscape:p-2.5 max-lg:landscape:pb-3 md:p-0 md:py-2 my-auto items-center min-h-0 flex-1 yellow-dot-scrollbar  [@media(min-width:1024px)_and_(max-height:680px)]:!flex-row [@media(min-width:1024px)_and_(max-height:680px)]:!overflow-x-auto [@media(min-width:1024px)_and_(max-height:680px)]:!overflow-y-hidden [@media(min-width:768px)_and_(max-width:1024px)_and_(orientation:portrait)]:!grid [@media(min-width:768px)_and_(max-width:1024px)_and_(orientation:portrait)]:!grid-cols-2 [@media(min-width:768px)_and_(max-width:1024px)_and_(orientation:portrait)]:!grid-rows-2 [@media(min-width:768px)_and_(max-width:1024px)_and_(orientation:portrait)]:!h-full [@media(min-width:768px)_and_(max-width:1024px)_and_(orientation:portrait)]:!overflow-hidden [@media(min-width:768px)_and_(max-width:1024px)_and_(orientation:portrait)]:!gap-3">
+        {albumsData.map((album, index) => {
+          const isUnreleased = album.isUnreleased || index === 2;
+          const isLocked =
+            (album.isLocked || index === 3) &amp;&amp;
+            !unlockedAlbums.includes(album.id);
+
+          return (
+            &lt;div
+              key={album.id}
+              onClick={() => handleAlbumClick({ ...album, isLocked })}
+              className={`w-full max-w-[320px] md:max-w-none md:w-[280px] max-lg:landscape:h-full max-lg:landscape:w-auto aspect-[4/3] md:aspect-[14/19] bg-[#14151a]/80 border border-white/10 p-3 max-lg:landscape:p-2 md:p-6 flex flex-col max-lg:landscape:relative md:flex-col justify-between cursor-pointer hover:border-white/40 transition-all group shrink-0 overflow-hidden relative [@media(min-width:1024px)_and_(max-height:680px)]:!h-full [@media(min-width:1024px)_and_(max-height:680px)]:!w-[220px] [@media(min-width:1024px)_and_(max-height:680px)]:!aspect-[14/19] [@media(min-width:1024px)_and_(max-height:680px)]:!relative [@media(min-width:1024px)_and_(max-height:680px)]:!p-2 [@media(min-width:768px)_and_(max-width:1024px)_and_(orientation:portrait)]:!w-full [@media(min-width:768px)_and_(max-width:1024px)_and_(orientation:portrait)]:!h-full [@media(min-width:768px)_and_(max-width:1024px)_and_(orientation:portrait)]:!aspect-auto [@media(min-width:768px)_and_(max-width:1024px)_and_(orientation:portrait)]:!p-3 [@media(min-width:768px)_and_(max-width:1024px)_and_(orientation:portrait)]:!min-h-0 ${
+                isUnreleased ? "opacity-95" : ""
+              }`}
+            >
+              {/* Badges Overlay */}
+              &lt;div className="absolute top-2 right-2 z-20 flex gap-1">
+                {isUnreleased &amp;&amp; (
+                  &lt;span className="bg-yellow-500/20 text-yellow-300 border border-yellow-500/40 text-[8px] md:text-[9px] font-mono tracking-widest px-2 py-0.5 uppercase">
+                    UNRELEASED
+                  &lt;/span>
+                )}
+                {unlockedAlbums.includes(album.id) ? (
+                  &lt;span className="bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-[8px] md:text-[9px] font-mono tracking-widest px-2 py-0.5 uppercase flex items-center gap-1">
+                    &lt;span>🔓&lt;/span> UNLOCKED VIA CELESTARIS
+                  &lt;/span>
+                ) : (
+                  isLocked &amp;&amp; (
+                    &lt;span className="bg-red-500/20 text-red-400 border border-red-500/40 text-[8px] md:text-[9px] font-mono tracking-widest px-2 py-0.5 uppercase flex items-center gap-1">
+                      &lt;span>🔒&lt;/span> PROTECTED
+                    &lt;/span>
+                  )
+                )}
+              &lt;/div>
+
+              {/* Album Artwork Container */}
+              &lt;div className="w-full h-full max-lg:landscape:absolute max-lg:landscape:inset-0 max-lg:landscape:h-full md:flex-1 min-h-0 bg-[#0a0a0c] border border-white/5 overflow-hidden flex items-center justify-center group-hover:border-white/20 transition-colors mb-2 max-lg:landscape:mb-0 md:mb-3 relative [@media(min-width:1024px)_and_(max-height:680px)]:!absolute [@media(min-width:1024px)_and_(max-height:680px)]:!inset-0 [@media(min-width:1024px)_and_(max-height:680px)]:!h-full [@media(min-width:1024px)_and_(max-height:680px)]:!mb-0 [@media(min-width:768px)_and_(max-width:1024px)_and_(orientation:portrait)]:!static [@media(min-width:768px)_and_(max-width:1024px)_and_(orientation:portrait)]:!flex-1 [@media(min-width:768px)_and_(max-width:1024px)_and_(orientation:portrait)]:!min-h-0 [@media(min-width:768px)_and_(max-width:1024px)_and_(orientation:portrait)]:!w-full [@media(min-width:768px)_and_(max-width:1024px)_and_(orientation:portrait)]:!mb-2">
+                {album.coverUrl ? (
+                  &lt;img
+                    src={album.coverUrl}
+                    alt={album.title}
+                    className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ${
+                      isLocked ? "blur-sm opacity-40 grayscale" : ""
+                    }`}
+                  />
+                ) : (
+                  &lt;span className="text-[10px] text-white/40 tracking-widest">
+                    {isLocked ? "[ LOCKED ARCHIVE ]" : "[ LOADING ARTWORK ]"}
+                  &lt;/span>
+                )}
+
+                {/* Dark Gradient Overlay */}
+                &lt;div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/90 via-black/50 to-transparent hidden max-lg:landscape:block md:hidden pointer-events-none [@media(min-width:1024px)_and_(max-height:680px)]:!block [@media(min-width:768px)_and_(max-width:1024px)_and_(orientation:portrait)]:!hidden" />
+              &lt;/div>
+
+              {/* Album Info Text */}
+              &lt;div className="shrink-0 z-10 max-lg:landscape:absolute max-lg:landscape:bottom-2 max-lg:landscape:left-2.5 max-lg:landscape:right-2.5 md:static [@media(min-width:1024px)_and_(max-height:680px)]:!absolute [@media(min-width:1024px)_and_(max-height:680px)]:!bottom-2 [@media(min-width:1024px)_and_(max-height:680px)]:!left-2.5 [@media(min-width:1024px)_and_(max-height:680px)]:!right-2.5 [@media(min-width:768px)_and_(max-width:1024px)_and_(orientation:portrait)]:!static">
+                &lt;span className="text-[9px] max-lg:landscape:text-[7px] md:text-xs tracking-[0.2em] text-white/60 max-lg:landscape:text-white/80 [@media(min-width:1024px)_and_(max-height:680px)]:!text-white/80 block">
+                  {album.year} {isUnreleased ? "· DEMO / IN-PROGRESS" : ""}
+                &lt;/span>
+                &lt;h3 className="text-sm max-lg:landscape:text-xs md:text-lg font-bold tracking-wide mt-0.5 group-hover:text-white transition-colors truncate">
+                  {album.title}
+                &lt;/h3>
+              &lt;/div>
+            &lt;/div>
+          );
+        })}
+      &lt;/div>
+
+      {/* Password Prompt Modal */}
+      {passwordModalAlbum &amp;&amp; (
+        &lt;div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+          &lt;div className="bg-[#14151a] border border-white/20 p-6 max-w-sm w-full shadow-2xl relative">
+            &lt;button
+              onClick={() => setPasswordModalAlbum(null)}
+              className="absolute top-3 right-3 text-white/40 hover:text-white text-xs font-mono"
+            >
+              ✕ CLOSE
+            &lt;/button>
+            &lt;span className="text-red-400 text-xs font-mono tracking-widest uppercase block mb-1">
+              🔒 RESTRICTED ACCESS
+            &lt;/span>
+            &lt;h4 className="text-lg font-bold uppercase tracking-wider mb-2">
+              {passwordModalAlbum.title}
+            &lt;/h4>
+            &lt;p className="text-xs text-white/60 mb-4 font-mono">
+              ENTER PASSCODE TO UNLOCK STREAM ARCHIVE
+            &lt;/p>
+            &lt;form onSubmit={handlePasswordSubmit} className="space-y-3">
+              &lt;input
+                type="password"
+                value={enteredPassword}
+                onChange={(e) => setEnteredPassword(e.target.value)}
+                placeholder="Passcode..."
+                autoFocus
+                className="w-full bg-black/60 border border-white/20 px-3 py-2 text-sm text-white font-mono focus:outline-none focus:border-white/60"
+              />
+              {passwordError &amp;&amp; (
+                &lt;p className="text-red-400 text-[10px] font-mono tracking-widest uppercase">
+                  INVALID PASSCODE. ACCESS DENIED.
+                &lt;/p>
+              )}
+              &lt;button
+                type="submit"
+                className="w-full py-2 bg-white text-black font-bold text-xs tracking-[0.2em] uppercase hover:bg-white/90 transition-colors"
+              >
+                UNLOCK
+              &lt;/button>
+            &lt;/form>
+          &lt;/div>
+        &lt;/div>
+      )}
+
+      {/* Footer Music Player */}
+      &lt;div className="w-full h-10 md:h-14 bg-[#14151a] border border-white/10 px-3 max-lg:landscape:px-2.5 md:px-6 flex items-center justify-between shrink-0 max-lg:landscape:hidden">
+        &lt;div className="flex items-center gap-3 md:gap-4 truncate">
+          &lt;button
+            onClick={() => {
+              if (!currentTrack &amp;&amp; albumsData[0]?.tracks[0]) {
+                onPlayTrack(albumsData[0].tracks[0], albumsData[0]);
+              }
+            }}
+            className="w-5 h-5 max-lg:landscape:w-4.5 max-lg:landscape:h-4.5 md:w-7 md:h-7 bg-white/10 hover:bg-white/20 flex items-center justify-center text-[9px] md:text-xs cursor-pointer transition-colors shrink-0"
+          >
+            {isPlaying ? "❚❚" : "▶"}
+          &lt;/button>
+          &lt;div className="truncate">
+            &lt;p className="text-[10px] max-lg:landscape:text-[8.5px] md:text-[11px] font-bold tracking-wider truncate">
+              {currentTrack ? currentTrack.title : "NOTHING IS PLAYING"}
+            &lt;/p>
+            &lt;p className="text-[8px] max-lg:landscape:text-[7px] md:text-[9px] text-white/40 truncate">
+              {currentTrack
+                ? currentTrack.albumTitle
+                : "Select an album or track to initialize stream"}
+            &lt;/p>
+          &lt;/div>
+        &lt;/div>
+        &lt;div className="flex items-center gap-3 md:gap-4 shrink-0">
+          &lt;span className="text-[10px] md:text-[11px] tracking-widest text-white/40 hidden sm:inline">
+            {currentTrack ? "[ ACTIVE STREAM ]" : "[ NO ACTIVE SIGNAL ]"}
+          &lt;/span>
+          {currentTrack &amp;&amp; (
+            &lt;button
+              onClick={onStopMusic}
+              className="w-5 h-5 md:w-6 md:h-6 bg-white/5 hover:bg-red-500/20 hover:text-red-400 border border-white/10 flex items-center justify-center text-[10px] md:text-xs cursor-pointer transition-colors"
+              title="Cut music"
+            >
+              ✕
+            &lt;/button>
+          )}
+        &lt;/div>
+      &lt;/div>
+    &lt;/div>
+  );
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+
+</body>
+</html>

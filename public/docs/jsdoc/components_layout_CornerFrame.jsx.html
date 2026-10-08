@@ -1,0 +1,194 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> components/layout/CornerFrame.jsx</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    Documentation
+                </a>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Global</h3><ul><li><a href="global.html#PlaceholderObject3D">PlaceholderObject3D</a></li><li><a href="global.html#useSoundFX">useSoundFX</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p>Source</p>
+                    <h1>components/layout/CornerFrame.jsx</h1>
+                </header>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from "react";
+import HomeScene3D from "../three/HomeScene3D";
+import PlaceholderScene3D from "../three/Placeholder";
+
+/**
+ * Frames a catalog/home view and coordinates its background scene and transition.
+ * @param {Object} props Frame state, background configuration, and child content.
+ * @param {string} props.transitionPhase Current shared transition phase.
+ * @param {React.ReactNode} props.children Active section content.
+ * @param {{current: {x: number, y: number}}} props.mouse Normalized pointer position ref.
+ * @param {string} props.activeTab Active section key.
+ * @param {string} props.shape Placeholder geometry for non-home sections.
+ * @param {boolean} props.hasEntered Whether the welcome sequence completed.
+ * @returns {React.ReactElement}
+ */
+export default function CornerFrame({
+  transitionPhase,
+  children,
+  mouse,
+  activeTab,
+  shape,
+  hasEntered,
+}) {
+  const isClosedOrClosing = transitionPhase !== "idle";
+
+  return (
+    &lt;div className="absolute top-[3%] left-[3%] right-[3%] bottom-[12%] z-10 pointer-events-none">
+      {/* Top-Left Corner Bracket */}
+      &lt;div
+        className={`absolute w-8 h-8 border-t border-l border-white/80 z-30 pointer-events-none transform-gpu will-change-[top,left,opacity] transition-all duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] ${
+          hasEntered ? "opacity-100" : "opacity-0"
+        }`}
+        style={{
+          top: isClosedOrClosing ? "calc(50% - 16px)" : "0px",
+          left: isClosedOrClosing ? "calc(50% - 16px)" : "0px",
+        }}
+      />
+
+      {/* Bottom-Right Corner Bracket */}
+      &lt;div
+        className={`absolute w-8 h-8 border-b border-r border-white/80 z-30 pointer-events-none transform-gpu will-change-[bottom,right,opacity] transition-all duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] ${
+          hasEntered ? "opacity-100" : "opacity-0"
+        }`}
+        style={{
+          bottom: isClosedOrClosing ? "calc(50% - 16px)" : "0px",
+          right: isClosedOrClosing ? "calc(50% - 16px)" : "0px",
+        }}
+      />
+
+      {/* Main Clip-Path Container */}
+      &lt;div
+        className="relative w-full h-full lg:p-6 md:px-10 sm:p-4 pointer-events-auto transform-gpu will-change-[clip-path] transition-[clip-path] duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] overflow-hidden"
+        style={{
+          clipPath: isClosedOrClosing
+            ? "inset(calc(50% - 16px) calc(50% - 16px) calc(50% - 16px) calc(50% - 16px))"
+            : "inset(0px 0px 0px 0px)",
+        }}
+      >
+        {activeTab === "home" ? (
+          &lt;HomeScene3D mouse={mouse} hasEntered={hasEntered} />
+        ) : (
+          &lt;PlaceholderScene3D
+            shape={shape}
+            mouse={mouse}
+            hasEntered={hasEntered}
+          />
+        )}
+        &lt;div
+          className="relative z-20 h-full flex flex-col justify-center transition-opacity duration-300 transform-gpu will-change-opacity"
+          style={{ opacity: transitionPhase === "idle" ? 1 : 0 }}
+        >
+          {children}
+        &lt;/div>
+      &lt;/div>
+    &lt;/div>
+  );
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+
+</body>
+</html>

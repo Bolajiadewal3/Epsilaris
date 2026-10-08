@@ -1,0 +1,248 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> views/MusicDetailView.jsx</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    Documentation
+                </a>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Global</h3><ul><li><a href="global.html#PlaceholderObject3D">PlaceholderObject3D</a></li><li><a href="global.html#useSoundFX">useSoundFX</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p>Source</p>
+                    <h1>views/MusicDetailView.jsx</h1>
+                </header>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from "react";
+import { Canvas } from "@react-three/fiber";
+import { Environment } from "@react-three/drei";
+import RotatingCuboid from "../components/three/RotatingCuboid";
+
+/**
+ * Displays an album tracklist, shared playback state, and desktop 3D artwork.
+ * @param {Object} props Selected album, playback state, and view callbacks.
+ * @param {Object} props.selectedAlbum Album and track metadata to render.
+ * @param {Object|null} props.currentTrack Currently active track, if any.
+ * @param {boolean} props.isPlaying Whether the shared player is playing.
+ * @param {{x: number, y: number}} props.mouse Normalized pointer position for the 3D artwork.
+ * @param {Function} props.onBackToCatalog Returns to the album catalog.
+ * @param {Function} props.onPlayTrack Starts or toggles a track.
+ * @param {Function} props.onStopMusic Stops the shared music player.
+ * @returns {React.ReactElement}
+ */
+export default function MusicDetailView({
+  selectedAlbum,
+  currentTrack,
+  isPlaying,
+  mouse,
+  onBackToCatalog,
+  onPlayTrack,
+  onStopMusic,
+}) {
+  return (
+    &lt;div className="w-full flex flex-col h-full justify-between md:py-0 lg:py-0 overflow-hidden">
+      {/* Top Bar: Clean stacking on mobile */}
+      &lt;div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 shrink-0 mb-0 lg:mb-0">
+        &lt;button
+          onClick={onBackToCatalog}
+          className="text-[10px] md:text-xs tracking-[0.2em] text-yellow-400 uppercase cursor-pointer hover:underline text-left"
+        >
+          ← BACK TO CATALOGUE
+        &lt;/button>
+        &lt;div className="flex items-center justify-between sm:justify-end gap-3 md:gap-4">
+          {selectedAlbum.spotifyUrl &amp;&amp; (
+            &lt;a
+              href={selectedAlbum.spotifyUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[9px] md:text-[10px] tracking-[0.2em] text-white/60 hover:text-yellow-400 uppercase transition-colors"
+            >
+              [ SPOTIFY ]
+            &lt;/a>
+          )}
+          &lt;p className="text-[10px] md:text-xs tracking-[0.25em] text-yellow-400/80 uppercase truncate">
+            {selectedAlbum.title}
+          &lt;/p>
+        &lt;/div>
+      &lt;/div>
+
+      {/* Main Content Grid: Tracklist + 3D Object only on large screens (lg:) */}
+      &lt;div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8 my-auto items-center overflow-y-auto yellow-dot-scrollbar  py-2 min-h-0 flex-1">
+        &lt;div className="space-y-2 lg:space-y-4 w-full">
+          &lt;h3 className="text-lg lg:text-2xl font-bold tracking-tight">
+            TRACKLIST
+          &lt;/h3>
+          {/* 1 column on mobile/desktop, explicitly 2 columns only in mobile landscape */}
+          &lt;div className="grid grid-cols-1 max-lg:landscape:grid-cols-2 lg:grid-cols-1 gap-x-6 gap-y-1 divide-y max-lg:landscape:divide-y-0 lg:divide-y divide-white/10 border-y border-white/10 py-1 max-h-[180px] landscape:max-h-none lg:max-h-none overflow-y-auto lg:overflow-visible">
+            {selectedAlbum.tracks.map((track) => {
+              const isThisTrackPlaying =
+                currentTrack?.title === track.title &amp;&amp; isPlaying;
+              return (
+                &lt;div
+                  key={track.num}
+                  onClick={() => onPlayTrack(track, selectedAlbum)}
+                  className={`py-1.5 lg:py-3 flex items-center justify-between text-xs lg:text-sm cursor-pointer transition-colors ${
+                    isThisTrackPlaying
+                      ? "text-yellow-400 font-semibold"
+                      : "hover:text-yellow-400 text-white"
+                  }`}
+                >
+                  &lt;div className="flex items-center gap-3 lg:gap-4 truncate pr-2">
+                    &lt;span className="text-white/40 text-[10px] lg:text-xs shrink-0">
+                      {isThisTrackPlaying ? "▶" : track.num}
+                    &lt;/span>
+                    &lt;span className="truncate">{track.title}&lt;/span>
+                  &lt;/div>
+                  &lt;span className="text-white/40 text-[10px] lg:text-xs shrink-0">
+                    {track.duration}
+                  &lt;/span>
+                &lt;/div>
+              );
+            })}
+          &lt;/div>
+        &lt;/div>
+
+        {/* 3D Object - Completely hidden on phones and tablets, shown only on desktop (lg+) */}
+        &lt;div className="hidden lg:block w-full h-[280px] relative">
+          &lt;Canvas camera={{ position: [0, 0, 6] }}>
+            &lt;Environment
+              files="/monochrome_studio_02_1k.hdr"
+              background={false}
+            />
+            &lt;ambientLight intensity={0.6} />
+            &lt;pointLight position={[10, 10, 10]} intensity={1.5} />
+            &lt;directionalLight position={[5, 5, 5]} intensity={2.5} />
+            &lt;RotatingCuboid mouse={mouse} selectedAlbum={selectedAlbum} />
+          &lt;/Canvas>
+        &lt;/div>
+      &lt;/div>
+
+      {/* Bottom Player Bar */}
+      &lt;div className="w-full h-11 lg:h-12 bg-[#14151a] border border-yellow-400/20 px-4 lg:px-6 flex items-center justify-between text-[11px] lg:text-xs shrink-0 mt-auto">
+        &lt;div className="flex items-center gap-3 lg:gap-4 truncate">
+          &lt;span className="text-yellow-400 tracking-widest truncate">
+            {currentTrack
+              ? `NOW PLAYING: ${currentTrack.title}`
+              : "READY FOR PLAYBACK"}
+          &lt;/span>
+        &lt;/div>
+        &lt;div className="flex items-center gap-3 lg:gap-4 shrink-0">
+          &lt;span className="text-white/40 hidden sm:inline">
+            {isPlaying ? "STREAMING" : "STANDBY"}
+          &lt;/span>
+          {currentTrack &amp;&amp; (
+            &lt;button
+              onClick={onStopMusic}
+              className="w-5 h-5 lg:w-6 lg:h-6 bg-white/5 hover:bg-yellow-400/20 hover:text-yellow-400 border border-yellow-400/20 flex items-center justify-center text-[10px] lg:text-xs cursor-pointer transition-colors"
+              title="Cut music"
+            >
+              ✕
+            &lt;/button>
+          )}
+        &lt;/div>
+      &lt;/div>
+    &lt;/div>
+  );
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+
+</body>
+</html>

@@ -1,0 +1,250 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> components/widgets/WelcomeScreen.jsx</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    Documentation
+                </a>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Global</h3><ul><li><a href="global.html#PlaceholderObject3D">PlaceholderObject3D</a></li><li><a href="global.html#useSoundFX">useSoundFX</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p>Source</p>
+                    <h1>components/widgets/WelcomeScreen.jsx</h1>
+                </header>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState, useEffect } from "react";
+
+/**
+ * Shows the entry control and its timed transition into the portfolio.
+ * @param {Object} props Entry callback and optional deep-link auto-start flag.
+ * @param {function(): void} props.onEnter Called when the entry animation completes.
+ * @param {boolean} [props.autoStart=false] Starts the entry sequence automatically.
+ * @returns {React.ReactElement}
+ */
+export default function WelcomeScreen({ onEnter, autoStart = false }) {
+  const [stage, setStage] = useState("idle");
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+
+  /**
+   * Runs the staged entry animation and calls onEnter after its final delay.
+   * @returns {void}
+   */
+  const startSequence = () => {
+    setStage("fading-button");
+
+    /** Advance after the button fade completes. */
+    setTimeout(() => {
+      setStage("arrow-circle");
+    }, 500);
+
+    /** Hold the rotating arrow stage for two seconds. */
+    setTimeout(() => {
+      setStage("plain-circle");
+    }, 2500);
+
+    /** Replace the arrow with the final square frame. */
+    setTimeout(() => {
+      setStage("square");
+    }, 3100);
+
+    /** Hand control back to the app once the entrance sequence completes. */
+    setTimeout(() => {
+      onEnter();
+    }, 4200);
+  };
+
+  /** Start once on mount when a valid deep link requests automatic entry. */
+  useEffect(() => {
+    if (autoStart &amp;&amp; stage === "idle") {
+      startSequence();
+    }
+  }, [autoStart]);
+
+  /**
+   * Tilts the entry control relative to the pointer while it is idle.
+   * @param {React.MouseEvent&lt;HTMLDivElement>} event Pointer event.
+   * @returns {void}
+   */
+  const handleMouseMove = (event) => {
+    if (stage !== "idle") return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width - 0.5;
+    const y = (event.clientY - rect.top) / rect.height - 0.5;
+    setTilt({ x: y * -24, y: x * 24 });
+  };
+
+  /** Resets the entry control tilt after the pointer leaves. @returns {void} */
+  const handleMouseLeave = () => {
+    setTilt({ x: 0, y: 0 });
+  };
+
+  /** Begins entry when the control is idle. @returns {void} */
+  const handleClick = () => {
+    if (stage !== "idle") return;
+    startSequence();
+  };
+
+  return (
+    &lt;div className="absolute inset-0 z-50 bg-[#0a0a0c] flex flex-col items-center justify-center overflow-hidden [perspective:1000px]">
+      {/* 3D Button Layer */}
+      &lt;div
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        onClick={handleClick}
+        style={{
+          transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+        }}
+        className={`group relative cursor-pointer select-none [transform-style:preserve-3d] transform-gpu will-change-transform transition-all duration-500 ease-in-out ${
+          stage !== "idle"
+            ? "opacity-0 scale-95 pointer-events-none"
+            : "opacity-100 scale-100 transition-transform duration-150 ease-out hover:scale-105"
+        }`}
+      >
+        &lt;div className="absolute inset-0 rounded-full bg-orange-500/25 blur-xl [transform:translateZ(-30px)] transition-all duration-300 group-hover:bg-orange-500/50 group-hover:blur-2xl" />
+        &lt;div className="absolute inset-0 rounded-full bg-black/80 [transform:translateZ(-12px)] shadow-2xl" />
+        &lt;div className="relative px-12 py-6 rounded-full bg-gradient-to-b from-[#2a2b34] via-[#16171f] to-[#0a0b0e] border border-white/20 shadow-[0_20px_40px_rgba(0,0,0,0.9),inset_0_2px_4px_rgba(255,255,255,0.3),inset_0_-6px_12px_rgba(0,0,0,0.9)] active:translate-y-1 transition-all">
+          &lt;div className="absolute inset-[2px] rounded-full border border-white/10 pointer-events-none" />
+          &lt;span className="relative z-10 flex items-center justify-center text-sm font-extrabold tracking-[0.3em] uppercase text-white group-hover:text-orange-400 transition-colors">
+            ENTER
+          &lt;/span>
+        &lt;/div>
+      &lt;/div>
+
+      {/* Central Morphing Box Layer */}
+      {stage !== "idle" &amp;&amp; stage !== "fading-button" &amp;&amp; (
+        &lt;div className="absolute top-[3%] left-[3%] right-[3%] bottom-[12%] flex items-center justify-center pointer-events-none z-10">
+          &lt;div
+            className={`w-8 h-8 flex items-center justify-center border border-white/85 transition-all duration-1000 ease-[cubic-bezier(0.76,0,0.24,1)] ${
+              stage === "arrow-circle" || stage === "plain-circle"
+                ? "rounded-full"
+                : "rounded-none"
+            }`}
+          >
+            &lt;div
+              className={`flex items-center justify-center transition-all duration-500 ease-in-out ${
+                stage === "arrow-circle"
+                  ? "opacity-100 scale-100"
+                  : "opacity-0 scale-50"
+              }`}
+            >
+              &lt;svg
+                viewBox="0 0 24 24"
+                className="w-5 h-5 text-white stroke-current fill-none animate-spin"
+              >
+                &lt;path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
+              &lt;/svg>
+            &lt;/div>
+          &lt;/div>
+        &lt;/div>
+      )}
+    &lt;/div>
+  );
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+
+</body>
+</html>

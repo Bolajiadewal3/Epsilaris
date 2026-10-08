@@ -1,0 +1,419 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> views/PoetryDetailView.jsx</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    Documentation
+                </a>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Global</h3><ul><li><a href="global.html#PlaceholderObject3D">PlaceholderObject3D</a></li><li><a href="global.html#useSoundFX">useSoundFX</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p>Source</p>
+                    <h1>views/PoetryDetailView.jsx</h1>
+                </header>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState, useEffect, useRef } from "react";
+
+/**
+ * Renders one poem with stepped or instant reading and optional spoken audio.
+ * @param {Object} props Selected poem and catalog/player callbacks.
+ * @param {Object} props.activePoem Poem metadata, lines, and optional media URLs.
+ * @param {Function} props.onBackToCatalog Returns to the poetry catalog.
+ * @param {Function} props.onStopMusic Stops the shared music player.
+ * @returns {React.ReactElement}
+ */
+export default function PoetryDetailView({
+  activePoem,
+  onBackToCatalog,
+  onStopMusic,
+}) {
+  const [lines, setLines] = useState(activePoem?.lines || []);
+  const [revealedIndex, setRevealedIndex] = useState(0);
+  const [isTyping, setIsTyping] = useState(false);
+  const [typedText, setTypedText] = useState("");
+  const [noAnimationMode, setNoAnimationMode] = useState(false);
+  const [isSpokenAudioPlaying, setIsSpokenAudioPlaying] = useState(false);
+
+  const spokenAudioRef = useRef(null);
+  const typingIntervalRef = useRef(null);
+
+  useEffect(() => {
+    setRevealedIndex(0);
+    setTypedText("");
+    setIsTyping(false);
+    setIsSpokenAudioPlaying(false);
+
+    if (typingIntervalRef.current) clearInterval(typingIntervalRef.current);
+    if (spokenAudioRef.current) {
+      spokenAudioRef.current.pause();
+      spokenAudioRef.current.currentTime = 0;
+      spokenAudioRef.current = null;
+    }
+
+    if (activePoem?.textUrl) {
+      fetch(activePoem.textUrl)
+        .then((res) => res.text())
+        .then((rawText) => {
+          const rawLines = rawText.split("\n");
+          const cleanedLines = [];
+          let passedMetadata = false;
+
+          for (let line of rawLines) {
+            const trimmed = line.trim();
+            /** Keep headings and metadata out of the rendered poem body. */
+            if (
+              trimmed.startsWith("#") ||
+              trimmed.startsWith("Date:") ||
+              trimmed.startsWith("Movement:") ||
+              trimmed.startsWith("Sub-Theme") ||
+              trimmed.startsWith("Theme:")
+            ) {
+              continue;
+            }
+            if (!passedMetadata &amp;&amp; trimmed === "") {
+              passedMetadata = true;
+              continue;
+            }
+            if (passedMetadata || trimmed !== "") {
+              passedMetadata = true;
+              cleanedLines.push(trimmed);
+            }
+          }
+
+          while (cleanedLines.length > 0 &amp;&amp; cleanedLines[0] === "") {
+            cleanedLines.shift();
+          }
+
+          setLines(
+            cleanedLines.length > 0 ? cleanedLines : activePoem.lines || [],
+          );
+        })
+        .catch(() => setLines(activePoem.lines || []));
+    } else {
+      setLines(activePoem?.lines || []);
+    }
+
+    return () => {
+      if (typingIntervalRef.current) clearInterval(typingIntervalRef.current);
+      if (spokenAudioRef.current) spokenAudioRef.current.pause();
+    };
+  }, [activePoem]);
+
+  /**
+   * Types one line, stopping background music before the reading animation.
+   * @param {string} lineText Text to reveal character by character.
+   * @param {number} lineIdx Index of the line being revealed.
+   * @returns {void}
+   */
+  const handleTypeLine = (lineText, lineIdx) => {
+    if (isTyping) return;
+    onStopMusic();
+    setIsTyping(true);
+    setTypedText(lineText.charAt(0));
+
+    let charIdx = 1;
+    typingIntervalRef.current = setInterval(() => {
+      if (charIdx &lt; lineText.length) {
+        setTypedText(lineText.substring(0, charIdx + 1));
+        charIdx++;
+      } else {
+        clearInterval(typingIntervalRef.current);
+        setIsTyping(false);
+        setRevealedIndex(lineIdx + 1);
+      }
+    }, 35);
+  };
+
+  /** Toggles the poem's optional spoken recording. @returns {void} */
+  const toggleSpokenAudio = () => {
+    if (!spokenAudioRef.current &amp;&amp; activePoem?.audioUrl) {
+      spokenAudioRef.current = new Audio(activePoem.audioUrl);
+    }
+
+    if (spokenAudioRef.current) {
+      if (isSpokenAudioPlaying) {
+        spokenAudioRef.current.pause();
+        setIsSpokenAudioPlaying(false);
+      } else {
+        onStopMusic();
+        spokenAudioRef.current
+          .play()
+          .then(() => {
+            setIsSpokenAudioPlaying(true);
+            spokenAudioRef.current.onended = () =>
+              setIsSpokenAudioPlaying(false);
+          })
+          .catch(() => setIsSpokenAudioPlaying(false));
+      }
+    }
+  };
+
+  const externalPublicationUrl =
+    activePoem?.externalUrl ||
+    "https://kreatifzine.com/writers/writers-winter-2026/mobolaji-adewale-england/";
+
+  return (
+    &lt;div className="flex flex-col h-full justify-between yellow-dot-scrollbar overflow-y-auto overflow-x-hidden min-h-0 pb-24 lg:pb-6 pr-2">
+      {/* Top Bar Navigation &amp; Header */}
+      &lt;div className="flex flex-col gap-3 pb-4 border-b border-white/10 shrink-0">
+        {/* Publication Row Link */}
+        &lt;div className="flex flex-wrap items-center justify-between text-xs gap-2 border-b border-white/5 pb-2">
+          &lt;div className="flex items-center gap-2 text-white/50 shrink-0">
+            &lt;span className="text-[10px] tracking-[0.2em] uppercase text-yellow-400">
+              PUBLISHED WORKS:
+            &lt;/span>
+          &lt;/div>
+          &lt;a
+            href={externalPublicationUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-white/70 hover:text-yellow-400 transition-colors tracking-wide flex items-center gap-1.5 group break-words text-right"
+          >
+            &lt;span className="line-clamp-1 sm:line-clamp-none">
+              {activePoem?.publicationName ||
+                "Kreatif Zine // Winter 2026 Feature"}
+            &lt;/span>
+            &lt;span className="text-[10px] text-white/40 group-hover:text-yellow-400 shrink-0">
+              ↗
+            &lt;/span>
+          &lt;/a>
+        &lt;/div>
+
+        &lt;div className="flex items-center justify-between">
+          &lt;button
+            onClick={onBackToCatalog}
+            className="text-xs text-yellow-400 hover:underline tracking-widest uppercase flex items-center gap-1 cursor-pointer"
+          >
+            ← BACK TO POETRY CATALOG
+          &lt;/button>
+
+          {activePoem?.movement &amp;&amp; (
+            &lt;span className="text-[10px] tracking-widest text-white/50 uppercase border border-white/15 px-2 py-0.5">
+              {activePoem.movement}
+            &lt;/span>
+          )}
+        &lt;/div>
+
+        &lt;div className="flex flex-col md:flex-row md:items-center justify-between pt-1 gap-4 md:gap-2">
+          &lt;div className="flex items-center gap-3">
+            &lt;span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" />
+            &lt;span className="text-xs tracking-[0.2em] text-white/80 uppercase">
+              ACTIVE PIECE // {activePoem?.subtitle || activePoem?.title}
+            &lt;/span>
+          &lt;/div>
+
+          &lt;button
+            onClick={() => setNoAnimationMode(!noAnimationMode)}
+            className={`px-3 py-1 border text-[10px] tracking-[0.2em] uppercase transition-colors cursor-pointer ${
+              noAnimationMode
+                ? "bg-yellow-400 text-black border-yellow-400 font-bold"
+                : "bg-white/5 border-white/20 text-white/70 hover:bg-white/10"
+            }`}
+          >
+            {noAnimationMode ? "MODE: INSTANT" : "MODE: STEP-BY-STEP"}
+          &lt;/button>
+        &lt;/div>
+      &lt;/div>
+
+      {/* Main Content Area */}
+      &lt;div className="grid grid-cols-1 lg:grid-cols-12 gap-8 my-4 items-start flex-1">
+        &lt;div className="lg:col-span-8 space-y-6">
+          &lt;div>
+            &lt;p className="text-[10px] tracking-[0.25em] text-yellow-400 uppercase mb-1">
+              {activePoem?.opus}
+            &lt;/p>
+            &lt;h2 className="text-3xl md:text-5xl font-bold tracking-tight text-white mb-6">
+              {activePoem?.title}
+            &lt;/h2>
+          &lt;/div>
+
+          &lt;div className="space-y-4 font-mono text-sm md:text-base break-words whitespace-pre-wrap">
+            {noAnimationMode ? (
+              &lt;div className="space-y-3 text-white/90">
+                {lines.map((line, idx) => (
+                  &lt;p key={idx}>{line}&lt;/p>
+                ))}
+              &lt;/div>
+            ) : (
+              lines.map((line, idx) => {
+                const isRevealed = idx &lt;= revealedIndex;
+                const isCurrentActive = idx === revealedIndex;
+
+                if (!isRevealed) return null;
+
+                return (
+                  &lt;div
+                    key={idx}
+                    className="flex flex-col sm:flex-row sm:items-center gap-4"
+                  >
+                    {isCurrentActive &amp;&amp;
+                    idx > revealedIndex - (isTyping ? 0 : 1) ? (
+                      &lt;button
+                        onClick={() => handleTypeLine(line, idx)}
+                        disabled={isTyping}
+                        className="px-3 py-1 bg-yellow-400 text-black text-xs font-bold tracking-widest uppercase hover:bg-yellow-300 transition-colors cursor-pointer flex items-center gap-2 max-w-[140px]"
+                      >
+                        &lt;span>▶&lt;/span>
+                        &lt;span>LINE {idx + 1}&lt;/span>
+                      &lt;/button>
+                    ) : (
+                      &lt;span className="text-white/95 leading-relaxed">
+                        {isCurrentActive &amp;&amp; isTyping ? typedText : line}
+                        {isCurrentActive &amp;&amp; isTyping &amp;&amp; (
+                          &lt;span className="inline-block w-2 h-4 bg-yellow-400 ml-1 animate-pulse align-middle" />
+                        )}
+                      &lt;/span>
+                    )}
+                  &lt;/div>
+                );
+              })
+            )}
+          &lt;/div>
+        &lt;/div>
+
+        {/* Auditory Component Side Panel */}
+        &lt;div className="lg:col-span-4 bg-[#14151a] border border-white/10 p-6 flex flex-col justify-between space-y-6 shrink-0">
+          &lt;div>
+            &lt;span className="text-[10px] tracking-[0.25em] text-yellow-400 uppercase block mb-2">
+              AUDITORY COMPONENT
+            &lt;/span>
+            &lt;h4 className="text-lg font-bold tracking-tight mb-2">
+              SPOKEN CADENCE
+            &lt;/h4>
+            &lt;p className="text-xs text-white/60 leading-relaxed">
+              {activePoem?.audioUrl
+                ? "Listen to the original vocal recitation captured via binaural recording."
+                : "No vocal recording has been attached to this piece yet."}
+            &lt;/p>
+          &lt;/div>
+
+          {activePoem?.audioUrl ? (
+            &lt;button
+              onClick={toggleSpokenAudio}
+              className="w-full py-3 bg-white/10 hover:bg-white/20 border border-white/20 text-xs tracking-[0.2em] uppercase font-bold flex items-center justify-center gap-3 cursor-pointer transition-colors"
+            >
+              &lt;span>
+                {isSpokenAudioPlaying
+                  ? "❚❚ PAUSE VOICE"
+                  : "▶ PLAY SPOKEN CADENCE"}
+              &lt;/span>
+            &lt;/button>
+          ) : (
+            &lt;div className="w-full py-3 bg-white/5 border border-white/10 text-xs tracking-[0.2em] uppercase text-white/40 text-center font-bold">
+              AUDIO COMING SOON
+            &lt;/div>
+          )}
+        &lt;/div>
+      &lt;/div>
+
+      {/* Footer */}
+      &lt;div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs text-white/50 shrink-0">
+        &lt;span>PUBLISHED: {activePoem?.date}&lt;/span>
+        &lt;span>THEME: {activePoem?.theme}&lt;/span>
+      &lt;/div>
+    &lt;/div>
+  );
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+
+</body>
+</html>

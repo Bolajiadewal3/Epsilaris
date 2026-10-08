@@ -1,0 +1,201 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> views/DocsMarkdownView.jsx</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    Documentation
+                </a>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Global</h3><ul><li><a href="global.html#PlaceholderObject3D">PlaceholderObject3D</a></li><li><a href="global.html#useSoundFX">useSoundFX</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p>Source</p>
+                    <h1>views/DocsMarkdownView.jsx</h1>
+                </header>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from "react";
+import MarkdownViewer from "../components/widgets/MarkdownViewer.jsx";
+
+import architectureMd from "../../docs/architecture.md?raw";
+import userFlowsMd from "../../docs/user-flows.md?raw";
+import contentAuthoringMd from "../../docs/content-authoring.md?raw";
+
+const MARKDOWN_FILES = [
+  { id: "architecture", label: "Architecture", content: architectureMd },
+  { id: "user-flows", label: "User Flows", content: userFlowsMd },
+  {
+    id: "content-authoring",
+    label: "Authoring Guide",
+    content: contentAuthoringMd,
+  },
+];
+
+/**
+ * Sub-view for viewing Markdown documentation.
+ * @param {Object} props
+ * @param {string} props.activeDocId Currently selected Markdown doc ID.
+ * @param {function(string): void} props.onSelectDocId Changes active Markdown tab.
+ * @param {Function} props.onBackToCatalog Returns to the docs catalog.
+ */
+export default function DocsMarkdownView({
+  activeDocId,
+  onSelectDocId,
+  onBackToCatalog,
+}) {
+  const currentDoc =
+    MARKDOWN_FILES.find((d) => d.id === activeDocId) || MARKDOWN_FILES[0];
+
+  return (
+    &lt;div className="flex flex-col h-full justify-between relative overflow-hidden pb-20 lg:pb-6 pr-1 sm:pr-2">
+      {/* Top Header &amp; Navigation */}
+      &lt;div className="flex flex-col gap-3 pb-3 border-b border-white/10 shrink-0">
+        &lt;div className="flex items-center justify-between">
+          &lt;button
+            onClick={onBackToCatalog}
+            className="text-xs text-yellow-400 hover:underline tracking-widest uppercase flex items-center gap-1 cursor-pointer"
+          >
+            ← BACK TO DOCS CATALOG
+          &lt;/button>
+          &lt;div className="flex items-center gap-2">
+            &lt;span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse shrink-0" />
+            &lt;span className="text-[10px] sm:text-xs tracking-[0.25em] text-white/80 uppercase">
+              DOCS // {currentDoc.id.toUpperCase()}
+            &lt;/span>
+          &lt;/div>
+        &lt;/div>
+
+        {/* Markdown Document Switcher Tabs */}
+        &lt;div className="flex items-center gap-1.5 flex-wrap">
+          {MARKDOWN_FILES.map((doc) => (
+            &lt;button
+              key={doc.id}
+              onClick={() => onSelectDocId(doc.id)}
+              className={`px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider transition-all border cursor-pointer ${
+                currentDoc.id === doc.id
+                  ? "bg-yellow-400 text-black border-yellow-400 font-bold"
+                  : "bg-white/5 text-white/60 border-white/10 hover:border-white/30 hover:text-white"
+              }`}
+            >
+              {doc.label}
+            &lt;/button>
+          ))}
+        &lt;/div>
+      &lt;/div>
+
+      {/* Main Markdown Content Area */}
+      &lt;div className="flex-1 overflow-y-auto my-4 min-h-0 yellow-dot-scrollbar">
+        &lt;div className="bg-[#14151a] border border-white/10 p-4 sm:p-6 rounded">
+          &lt;MarkdownViewer content={currentDoc.content || ""} />
+        &lt;/div>
+      &lt;/div>
+
+      {/* Footer Status Bar */}
+      &lt;div className="pt-2 border-t border-white/10 flex items-center justify-between text-[10px] font-mono text-white/50 shrink-0">
+        &lt;span>STATUS: READY&lt;/span>
+        &lt;span>RENDER MODE: STATIC BUNDLED MARKDOWN&lt;/span>
+      &lt;/div>
+    &lt;/div>
+  );
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+
+</body>
+</html>

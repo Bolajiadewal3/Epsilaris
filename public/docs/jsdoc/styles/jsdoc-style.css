@@ -1,0 +1,51 @@
+body,
+html {
+  background-color: #0a0a0c !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+}
+
+#main {
+  background: #0a0a0c !important;
+}
+
+nav {
+  background: #14151a !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+nav h2 a,
+nav a {
+  color: #e2e8f0 !important;
+}
+
+nav a:hover {
+  color: #facc15 !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+.page-title {
+  color: #ffffff !important;
+  border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+a {
+  color: #facc15 !important;
+}
+
+code,
+pre {
+  background-color: #14151a !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #facc15 !important;
+}
+
+.params table,
+.props table {
+  background: #14151a !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}

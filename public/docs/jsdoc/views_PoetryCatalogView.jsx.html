@@ -1,0 +1,283 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> views/PoetryCatalogView.jsx</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    Documentation
+                </a>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Global</h3><ul><li><a href="global.html#PlaceholderObject3D">PlaceholderObject3D</a></li><li><a href="global.html#useSoundFX">useSoundFX</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p>Source</p>
+                    <h1>views/PoetryCatalogView.jsx</h1>
+                </header>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState, useMemo } from "react";
+
+/**
+ * @typedef {Object} PoemRecord
+ * @property {string} id Stable poem identifier.
+ * @property {string} title Display title.
+ * @property {string} [theme] Theme used by the catalog filter.
+ * @property {string} [movement] Movement searchable from the catalog.
+ * @property {string} [subTheme] Sub-theme searchable from the catalog.
+ * @property {string} [opus] Catalog label.
+ * @property {string[]} [lines] Parsed poem lines.
+ */
+
+/**
+ * Displays poems with catalog-local search and theme filtering.
+ * @param {Object} props Component inputs.
+ * @param {PoemRecord[]} props.POEMS_DATA Catalog records to display.
+ * @param {function(PoemRecord): void} props.onSelectPoem Opens a selected record.
+ * @returns {React.ReactElement}
+ */
+export default function PoetryCatalogView({ POEMS_DATA, onSelectPoem }) {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedTheme, setSelectedTheme] = useState("ALL");
+
+  const themes = useMemo(
+    /**
+     * Derives the available theme filters from the current catalog.
+     * @returns {string[]} Unique themes preceded by the all-items option.
+     */
+    () => {
+      const list = POEMS_DATA.map((poem) => poem.theme).filter(Boolean);
+      return ["ALL", ...Array.from(new Set(list))];
+    },
+    [POEMS_DATA],
+  );
+
+  const filteredPoems = useMemo(
+    /**
+     * Applies the catalog search and selected-theme constraints together.
+     * @returns {PoemRecord[]} Records matching both active filters.
+     */
+    () =>
+      POEMS_DATA.filter((poem) => {
+        const normalizedSearch = searchTerm.toLowerCase();
+        const matchesSearch =
+          poem.title.toLowerCase().includes(normalizedSearch) ||
+          poem.movement?.toLowerCase().includes(normalizedSearch) ||
+          poem.subTheme?.toLowerCase().includes(normalizedSearch);
+
+        const matchesTheme =
+          selectedTheme === "ALL" || poem.theme === selectedTheme;
+
+        return matchesSearch &amp;&amp; matchesTheme;
+      }),
+    [POEMS_DATA, searchTerm, selectedTheme],
+  );
+
+  return (
+    &lt;div className="flex flex-col h-full justify-between overflow-y-auto overflow-x-hidden pb-20 lg:pb-6 pr-2 yellow-dot-scrollbar">
+      {/* Header &amp; Filters Bar */}
+      &lt;div className="flex flex-col gap-4 pb-4 border-b border-white/10 shrink-0">
+        {/* Publication External Link Banner */}
+        &lt;div className="flex flex-wrap items-center justify-between text-xs gap-2 border-b border-white/5 pb-2">
+          &lt;div className="flex items-center gap-2 text-white/50 shrink-0">
+            &lt;span className="text-[10px] tracking-[0.2em] uppercase text-yellow-400">
+              PUBLISHED WORKS:
+            &lt;/span>
+          &lt;/div>
+          &lt;a
+            href="https://kreatifzine.com/writers/writers-winter-2026/mobolaji-adewale-england/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-white/70 hover:text-yellow-400 transition-colors tracking-wide flex items-center gap-1.5 group break-words text-right"
+          >
+            &lt;span className="line-clamp-1 sm:line-clamp-none">
+              Kreatif Zine // Winter 2026 Feature
+            &lt;/span>
+            &lt;span className="text-[10px] text-white/40 group-hover:text-yellow-400 shrink-0">
+              ↗
+            &lt;/span>
+          &lt;/a>
+        &lt;/div>
+
+        &lt;div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          &lt;div>
+            &lt;p className="text-[10px] tracking-[0.25em] text-yellow-400 uppercase">
+              ARCHIVE CATALOG
+            &lt;/p>
+            &lt;h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
+              POETRY &amp; ANTHOLOGY
+            &lt;/h2>
+          &lt;/div>
+
+          {/* Search Input */}
+          &lt;input
+            type="text"
+            placeholder="SEARCH TITLE, MOVEMENT..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="px-3 py-1.5 bg-[#14151a] border border-white/20 text-xs text-white placeholder:text-white/40 focus:outline-none focus:border-yellow-400 w-full sm:w-64 transition-colors"
+          />
+        &lt;/div>
+
+        {/* Theme Pills */}
+        &lt;div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+          {themes.map((theme) => (
+            &lt;button
+              key={theme}
+              onClick={() => setSelectedTheme(theme)}
+              className={`px-3 py-1 border text-[10px] tracking-[0.15em] uppercase whitespace-nowrap transition-colors cursor-pointer ${
+                selectedTheme === theme
+                  ? "bg-yellow-400 text-black border-yellow-400 font-bold"
+                  : "bg-white/5 border-white/15 text-white/60 hover:border-white/40"
+              }`}
+            >
+              {theme}
+            &lt;/button>
+          ))}
+        &lt;/div>
+      &lt;/div>
+
+      {/* Grid of Poem Cards */}
+      &lt;div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-6 flex-1 items-start">
+        {filteredPoems.map((poem) => (
+          &lt;div
+            key={poem.id}
+            onClick={() => onSelectPoem(poem)}
+            className="group relative bg-[#14151a]/80 hover:bg-[#1c1d24] border border-white/10 hover:border-yellow-400/60 p-5 transition-all cursor-pointer flex flex-col justify-between h-48"
+          >
+            &lt;div>
+              &lt;div className="flex items-center justify-between text-[10px] text-white/40 uppercase tracking-widest mb-2">
+                &lt;span>{poem.opus}&lt;/span>
+                &lt;span className="text-yellow-400/80">{poem.movement}&lt;/span>
+              &lt;/div>
+              &lt;h3 className="text-xl font-bold tracking-tight group-hover:text-yellow-400 transition-colors">
+                {poem.title}
+              &lt;/h3>
+              &lt;p className="text-xs text-white/50 mt-1 line-clamp-2">
+                {poem.lines?.[0] || poem.subTheme}
+              &lt;/p>
+            &lt;/div>
+
+            &lt;div className="pt-3 border-t border-white/5 flex items-center justify-between text-[10px] text-white/40 tracking-wider">
+              &lt;span>{poem.theme}&lt;/span>
+              &lt;span className="group-hover:translate-x-1 transition-transform text-yellow-400">
+                READ →
+              &lt;/span>
+            &lt;/div>
+          &lt;/div>
+        ))}
+
+        {filteredPoems.length === 0 &amp;&amp; (
+          &lt;div className="col-span-full py-12 text-center text-xs text-white/40 tracking-widest uppercase">
+            NO POEMS MATCHING YOUR CRITERIA
+          &lt;/div>
+        )}
+      &lt;/div>
+
+      {/* Footer Info */}
+      &lt;div className="pt-3 border-t border-white/10 flex items-center justify-between text-[10px] text-white/40 tracking-widest shrink-0">
+        &lt;span>TOTAL PIECES: {POEMS_DATA.length}&lt;/span>
+        &lt;span>SELECT A PIECE TO ENTER READER&lt;/span>
+      &lt;/div>
+    &lt;/div>
+  );
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+
+</body>
+</html>

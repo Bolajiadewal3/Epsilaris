@@ -1,0 +1,183 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> views/DocsJsDocView.jsx</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    Documentation
+                </a>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Global</h3><ul><li><a href="global.html#PlaceholderObject3D">PlaceholderObject3D</a></li><li><a href="global.html#useSoundFX">useSoundFX</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p>Source</p>
+                    <h1>views/DocsJsDocView.jsx</h1>
+                </header>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from "react";
+
+/**
+ * Sub-view for viewing JSDoc HTML API documentation iframe.
+ * @param {Object} props
+ * @param {Function} props.onBackToCatalog Returns to the docs catalog.
+ */
+export default function DocsJsDocView({ onBackToCatalog }) {
+  return (
+    &lt;div className="flex flex-col h-full justify-between relative overflow-hidden pb-20 lg:pb-6 pr-1 sm:pr-2">
+      {/* Top Header */}
+      &lt;div className="flex items-center justify-between pb-3 border-b border-white/10 shrink-0">
+        &lt;button
+          onClick={onBackToCatalog}
+          className="text-xs text-yellow-400 hover:underline tracking-widest uppercase flex items-center gap-1 cursor-pointer"
+        >
+          ← BACK TO DOCS CATALOG
+        &lt;/button>
+        &lt;div className="flex items-center gap-2">
+          &lt;span className="w-2 h-2 rounded-full bg-yellow-400 animate-pulse shrink-0" />
+          &lt;span className="text-[10px] sm:text-xs tracking-[0.25em] text-white/80 uppercase">
+            DOCUMENTATION // JSDOC API REFERENCE
+          &lt;/span>
+        &lt;/div>
+      &lt;/div>
+
+      {/* Iframe View Area */}
+      &lt;div className="flex-1 my-4 min-h-0 relative">
+        &lt;div className="w-full h-full border border-white/10 bg-[#0a0a0c] rounded overflow-hidden grayscale opacity-40">
+          &lt;iframe
+            src="/docs/jsdoc/index.html"
+            title="JSDoc API Reference"
+            className="w-full h-full border-none pointer-events-none"
+            aria-hidden="true"
+            tabIndex={-1}
+          />
+        &lt;/div>
+        &lt;div className="absolute inset-0 z-10 bg-[#0d0e12]/90 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center">
+          &lt;div className="max-w-md space-y-4 border border-white/10 bg-[#14151a] p-8 shadow-2xl relative">
+            &lt;div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-yellow-400 to-transparent" />
+            &lt;span className="w-2.5 h-2.5 rounded-full bg-yellow-400 animate-pulse inline-block mx-auto" />
+            &lt;p className="text-[10px] tracking-[0.3em] text-yellow-400 uppercase font-bold">
+              API REFERENCE // UNDER REFINEMENT
+            &lt;/p>
+            &lt;h2 className="text-2xl md:text-3xl font-bold tracking-tight text-white uppercase">
+              JSDOC GUIDE IN PROGRESS
+            &lt;/h2>
+            &lt;p className="text-xs text-white/60 font-mono leading-relaxed">
+              The generated API reference is temporarily unavailable while its
+              documentation is being refined.
+            &lt;/p>
+            &lt;div className="pt-4 border-t border-white/10 text-[10px] tracking-[0.2em] text-white/40 uppercase">
+              STATUS // REFINEMENT
+            &lt;/div>
+          &lt;/div>
+        &lt;/div>
+      &lt;/div>
+
+      {/* Footer Status Bar */}
+      &lt;div className="pt-2 border-t border-white/10 flex items-center justify-between text-[10px] font-mono text-white/50 shrink-0">
+        &lt;span>STATUS: UNDER REFINEMENT&lt;/span>
+        &lt;span>RENDER MODE: SUBFRAME IFRAME&lt;/span>
+      &lt;/div>
+    &lt;/div>
+  );
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+
+</body>
+</html>

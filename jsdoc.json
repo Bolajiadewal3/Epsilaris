@@ -1,0 +1,17 @@
+{
+  "tags": {
+    "allowUnknownTags": true,
+    "dictionaries": ["jsdoc"]
+  },
+  "source": {
+    "include": ["src"],
+    "includePattern": "\\.(js|jsx)$",
+    "excludePattern": "(node_modules|docs)"
+  },
+  "plugins": ["plugins/markdown", "node_modules/better-docs/component"],
+  "opts": {
+    "template": "node_modules/better-docs",
+    "destination": "./public/docs/jsdoc",
+    "recurse": true
+  }
+}

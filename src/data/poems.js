@@ -1,0 +1,33 @@
+export const POEMS_DATA = [
+  {
+    id: "why-now",
+    title: "Why Now",
+    subtitle: "STARDUST & THUNDER",
+    opus: "OPUS 01",
+    date: "March 15, 2025",
+    theme: "Nature & Cosmos",
+    subTheme: "Nature-focused",
+    movement: "Romanticism",
+    audioUrl: "/poetry/audio/why-now.wav",
+    textUrl: "/poetry/poems/why-now.md",
+    lines: [
+      "Of every life,",
+      "Every seedling of stardust serenaded into starlight,",
+      "Every shade and hue, tint and taste,",
+      "Why now do I draw breath and fight futile thunders.",
+    ],
+  },
+  {
+    id: "lone",
+    title: "LONE",
+    subtitle: "SOLITUDE",
+    opus: "OPUS 02",
+    date: "February 14, 2024",
+    theme: "Identity & Reflection",
+    subTheme: "Internal Monologue",
+    movement: "Contemporary",
+    audioUrl: "/poetry/audio/LONE.wav",
+    textUrl: "/poetry/poems/LONE.md",
+    lines: [],
+  },
+];

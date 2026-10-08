@@ -1,0 +1,289 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title> components/layout/Navbar.jsx</title>
+
+  <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="./build/entry.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,400,700|Inconsolata,700" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+  <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+  <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+  <link type="text/css" rel="stylesheet" href="">
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+  
+</head>
+
+
+
+<body class="layout small-header">
+    <div id="stickyNavbarOverlay"></div>
+    
+
+<div class="top-nav">
+    <div class="inner">
+        <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+        <div class="logo">
+            
+            
+        </div>
+        <div class="menu">
+            
+            <div class="navigation">
+                <a
+                    href="index.html"
+                    class="link"
+                >
+                    Documentation
+                </a>
+                
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+    <div id="main">
+        <div
+            class="sidebar "
+            id="sidebarNav"
+        >
+            
+            <nav>
+                
+                    <h2><a href="index.html">Documentation</a></h2><div class="category"><h3>Global</h3><ul><li><a href="global.html#PlaceholderObject3D">PlaceholderObject3D</a></li><li><a href="global.html#useSoundFX">useSoundFX</a></li></ul></div>
+                
+            </nav>
+        </div>
+        <div class="core" id="main-content-wrapper">
+            <div class="content">
+                <header class="page-title">
+                    <p>Source</p>
+                    <h1>components/layout/Navbar.jsx</h1>
+                </header>
+                
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState } from "react";
+import { NAV_ITEMS } from "../../data/nav.js";
+
+/**
+ * Renders section navigation, including the expandable mobile menu.
+ * @param {Object} props Current navigation state and selection callback.
+ * @param {string} props.activeTab Active section key.
+ * @param {function(string): void} props.onSelectTab Selects a section.
+ * @param {boolean} props.isTransitioning Whether navigation is temporarily locked.
+ * @param {boolean} props.hasEntered Whether the welcome sequence completed.
+ * @returns {React.ReactElement}
+ */
+export default function Navbar({
+  activeTab,
+  onSelectTab,
+  isTransitioning,
+  hasEntered,
+}) {
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+
+  /** Closes the mobile menu before asking the app to navigate. @param {string} key Destination section key. @returns {void} */
+  const handleItemClick = (key) => {
+    setIsMobileOpen(false);
+    onSelectTab(key);
+  };
+
+  return (
+    &lt;>
+      {/* --- DESKTOP NAVBAR (Unchanged) --- */}
+      &lt;nav className="hidden lg:flex absolute bottom-6 left-1/2 -translate-x-1/2 z-30 items-center">
+        &lt;div
+          className={`flex items-center gap-10 [@media(min-width:768px)_and_(max-width:1366px)_and_(orientation:landscape)_and_(pointer:coarse)]:gap-6 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            hasEntered
+              ? "translate-x-0 opacity-100 scale-100"
+              : "translate-x-0 opacity-0 scale-50 pointer-events-none"
+          }`}
+        >
+          {NAV_ITEMS.map((item) => {
+            const isActive = activeTab === item.key;
+            return (
+              &lt;button
+                key={item.key}
+                disabled={isTransitioning}
+                onClick={() => onSelectTab(item.key)}
+                className={`group flex items-center gap-2 [@media(min-width:768px)_and_(max-width:1366px)_and_(orientation:landscape)_and_(pointer:coarse)]:gap-1 text-xs [@media(min-width:768px)_and_(max-width:1366px)_and_(orientation:landscape)_and_(pointer:coarse)]:text-[clamp(11px,0.88vw,12px)] tracking-[0.2em] transition-all duration-300 uppercase cursor-pointer disabled:cursor-not-allowed ${
+                  isActive
+                    ? "text-white font-semibold"
+                    : "text-white/40 hover:text-white/80"
+                }`}
+              >
+                &lt;span
+                  className={
+                    isActive
+                      ? "text-white"
+                      : "text-white/40 group-hover:text-white/80"
+                  }
+                >
+                  {item.id}
+                &lt;/span>
+                &lt;span>—&lt;/span>
+                &lt;span>{item.label}&lt;/span>
+              &lt;/button>
+            );
+          })}
+        &lt;/div>
+      &lt;/nav>
+
+      {/* --- MOBILE NAVBAR TRIGGER: Bottom Left Icon --- */}
+      &lt;div className="lg:hidden absolute bottom-6 left-6 z-30">
+        &lt;div
+          className={`transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            hasEntered
+              ? "translate-y-0 opacity-100 scale-100"
+              : "translate-y-4 opacity-0 scale-50 pointer-events-none"
+          }`}
+        >
+          &lt;button
+            onClick={() => setIsMobileOpen(true)}
+            disabled={isTransitioning}
+            className="w-12 h-12 rounded-full border border-white/15 bg-black/50 backdrop-blur-md flex items-center justify-center text-white/90 hover:text-white hover:border-white/40 transition-all cursor-pointer shadow-lg"
+            aria-label="Open Navigation Menu"
+          >
+            &lt;svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              viewBox="0 0 24 24"
+            >
+              &lt;path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+              />
+            &lt;/svg>
+          &lt;/button>
+        &lt;/div>
+      &lt;/div>
+
+      {/* --- MOBILE FULL-SCREEN EXPANDED OVERLAY --- */}
+      {/* --- MOBILE FULL-SCREEN EXPANDED OVERLAY --- */}
+      {/* --- MOBILE FULL-SCREEN EXPANDED OVERLAY (TWO-COLUMN LANDSCAPE, NO SCROLL) --- */}
+      {isMobileOpen &amp;&amp; (
+        &lt;div className="fixed inset-0 z-50 bg-[#0a0a0c]/95 backdrop-blur-2xl flex flex-col justify-between px-6 py-4 overflow-hidden animate-fadeIn">
+          {/* Header */}
+          &lt;div className="flex justify-between items-center shrink-0">
+            &lt;span className="text-[10px] tracking-[0.25em] text-white/50 uppercase">
+              Navigation
+            &lt;/span>
+            &lt;button
+              onClick={() => setIsMobileOpen(false)}
+              className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-white/80 hover:text-white transition-all cursor-pointer"
+              aria-label="Close Navigation Menu"
+            >
+              &lt;svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                viewBox="0 0 24 24"
+              >
+                &lt;path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              &lt;/svg>
+            &lt;/button>
+          &lt;/div>
+
+          {/* Links Grid: 1 column on portrait, 2 columns on landscape */}
+          &lt;div className="grid grid-cols-1 landscape:grid-cols-2 gap-x-6 gap-y-2 w-full max-w-2xl mx-auto my-auto items-center">
+            {NAV_ITEMS.map((item) => {
+              const isActive = activeTab === item.key;
+              return (
+                &lt;button
+                  key={item.key}
+                  disabled={isTransitioning}
+                  onClick={() => handleItemClick(item.key)}
+                  className={`group flex items-center justify-between py-2 sm:py-3 border-b border-white/10 text-left transition-all cursor-pointer ${
+                    isActive
+                      ? "text-white font-semibold"
+                      : "text-white/50 hover:text-white"
+                  }`}
+                >
+                  &lt;div className="flex items-center gap-3">
+                    &lt;span className="text-[10px] tracking-widest text-white/30">
+                      {item.id}
+                    &lt;/span>
+                    &lt;span className="text-sm sm:text-base tracking-wider uppercase">
+                      {item.label}
+                    &lt;/span>
+                  &lt;/div>
+                  &lt;span className="text-white/30 group-hover:translate-x-1 transition-transform text-sm">
+                    →
+                  &lt;/span>
+                &lt;/button>
+              );
+            })}
+          &lt;/div>
+
+          {/* Footer branding */}
+          &lt;div className="text-center shrink-0">
+            &lt;p className="text-[9px] tracking-[0.3em] text-white/30 uppercase">
+              AREMU // 2026
+            &lt;/p>
+          &lt;/div>
+        &lt;/div>
+      )}
+    &lt;/>
+  );
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+            </div>
+            
+            <footer class="footer">
+                <div class="content has-text-centered">
+                    <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a></p>
+                    <p class="sidebar-created-by">
+                        <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by
+                        <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+                    </p>
+                </div>
+            </footer>
+            
+        </div>
+        <div id="side-nav" class="side-nav">
+        </div>
+    </div>
+<script src="scripts/app.min.js"></script>
+<script>PR.prettyPrint();</script>
+<script src="scripts/linenumber.js"> </script>
+
+
+</body>
+</html>

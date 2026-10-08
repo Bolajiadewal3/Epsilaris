@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@media (pointer: fine) {
+  *,
+  *::before,
+  *::after {
+    cursor: none !important;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #0a0a0c;
+}
+@layer utilities {
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  .transform-gpu {
+    transform: translate3d(0, 0, 0);
+  }
+  .rotate-y-180 {
+    transform: rotateY(180deg);
+  }
+  .backface-hidden {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+}
+
+/* Yellow Dot Scrollbar - Portrait & Landscape Support */
+.yellow-dot-scrollbar::-webkit-scrollbar {
+  width: 10px !important;
+  height: 10px !important;
+}
+
+.yellow-dot-scrollbar::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.yellow-dot-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #facc15 !important; /* yellow-400 */
+  background-clip: padding-box !important;
+  border-radius: 9999px !important;
+
+  /* Vertical transparent spacing (portrait / default) */
+  border-top: 15dvh solid transparent !important;
+  border-bottom: 15dvh solid transparent !important;
+  border-left: 3px solid transparent !important;
+  border-right: 3px solid transparent !important;
+}
+
+/* Horizontal transparent spacing (landscape) */
+@media (orientation: landscape) {
+  .yellow-dot-scrollbar::-webkit-scrollbar-thumb {
+    border-top: 3px solid transparent !important;
+    border-bottom: 3px solid transparent !important;
+    border-left: 15dvw solid transparent !important;
+    border-right: 15dvw solid transparent !important;
+  }
+}
+
+.yellow-dot-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #fde047 !important; /* yellow-300 */
+}
