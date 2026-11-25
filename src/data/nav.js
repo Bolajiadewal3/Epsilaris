@@ -4,6 +4,7 @@ export const NAV_ITEMS = [
   { id: "03", label: "VIDEOGRAPHY", key: "videography" },
   { id: "04", label: "POETRY", key: "poetry" },
   { id: "05", label: "PHOTOGRAPHY", key: "photography" },
-  { id: "06", label: "LINKS", key: "links" },
-  { id: "07", label: "DOCUMENTATION", key: "documentation" },
+  { id: "06", key: "zines", label: "ZINES" },
+  { id: "07", label: "LINKS", key: "links" },
+  { id: "08", label: "DOCUMENTATION", key: "documentation" },
 ];

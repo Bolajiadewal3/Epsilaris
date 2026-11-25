@@ -22,6 +22,7 @@ import PoetryDetailView from "./views/PoetryDetailView.jsx";
 import PhotographyView from "./views/PhotographyView.jsx";
 import PhotographyDetailView from "./views/PhotographyDetailView.jsx";
 import LinksView from "./views/LinksView.jsx";
+import ZinesView from "./views/ZinesView.jsx";
 
 import { useSoundFX } from "./hooks/useSoundFX";
 import CustomCursor from "./components/widgets/CustomCursor.jsx";
@@ -422,6 +423,8 @@ export default function App() {
       case "photography":
       case "videography":
         return "dodecahedron";
+      case "zines":
+        return "dodecahedron";
       case "links":
         return "torus";
       default:
@@ -457,6 +460,7 @@ export default function App() {
         "videography",
         "poetry",
         "photography",
+        "zines",
         "links",
         "documentation",
       ];
@@ -487,6 +491,7 @@ export default function App() {
       (activeTab === "poetry" && poetryView === "catalog") ||
       (activeTab === "photography" && photographyView === "catalog") ||
       (activeTab === "documentation" && docsView === "catalog") ||
+      (activeTab === "zines") ||
       activeTab === "links" ? (
         <CornerFrame
           transitionPhase={transitionPhase}
@@ -508,6 +513,8 @@ export default function App() {
               </p>
             </div>
           )}
+
+          {activeTab === "zines" && <ZinesView mouse={mouse} />}
 
           {activeTab === "music" && musicView === "catalog" && (
             <MusicCatalogView
